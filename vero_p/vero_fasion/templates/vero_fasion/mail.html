@@ -1,0 +1,56 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial=scale=1">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<style type="text/css">
+		hr{
+	        border-top: 1px solid #d5d5d5;
+	        width: 100%;
+	        margin-top: .8rem;
+	    }
+     	#promo{
+     		color: #1E90FF;
+     		font-weight: bold;
+     	}
+
+
+</style>
+</head>
+<body>
+<div class="row pl-5 pr-5">
+	<div class="col-12 mt-5 mb-5">
+		<a href="{{side}}{% url 'vero-home'%}"><img src="cid:logo.png"></a>
+	</div>
+	<div class="col-12 mb-5">
+		<h1 class="mb-5">Witamy w Vero Fashion</h1>
+			<p>Nasza nowoczesna kolekcja dla kobiet, mężczyzn i dzieci została zaprojektowana z myślą o długowieczności.
+Odkryj podstawowe informacje, na których można polegać od nowa. 
+
+			Nie zapomnij: korzystaj z 10% zniżki z kodem <span id="promo">{{promo}}</span> przy kasie.</p>
+	</div>
+	<div class="col-6 mb-3">
+		<a href="{{side}}{% url 'vero-woman'%}"><img src="cid:women.png"></a>
+	</div>
+	<div class="col-6 mb-3">
+		<a href="{{side}}{% url 'vero-man'%}"><img src="cid:men.png"></a>
+	</div>
+	<div class="col-6 mb-3">
+		<a href="{{side}}{% url 'vero-kid'%}"><img src="cid:kid.png"></a>
+	</div>
+	<div class="col-6 mb-3">
+		<a href="{{side}}{% url 'vero-sale'%}"><img src="cid:sale.png"></a>
+	</div>
+
+	<hr class="mt-5">
+
+	<small class="text-muted mt-2 mb-5">Jeśli masz jakiekolwiek pytania dotyczące tej wiadomości lub dowolnego produktu, odwiedź dział obsługi klienta w naszej witrynie, przeczytaj nasz
+		<span><a href="{{side}}{% url 'vero-privacy'%}">Informacja o prywatności</a></span> i <span><a href="{{side}}{% url 'vero-regulation'%}">Zasady zwrotu i zwrotu pieniędzy</a></span>. Aby uzyskać więcej informacji na temat zamówień, skontaktuj się z obsługą klienta na naszej stronie.
+	</small>
+</div>
+	
+</body>
+</html>

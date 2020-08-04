@@ -1,0 +1,365 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="pl">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'vero_fasion/favicon.png'%}">
+
+    <!-- fontawesome -->
+    {% block style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'fontawesome/css/all.min.css' %}" />
+    {% endblock %}
+
+    <!-- our local css file -->
+    <link rel="stylesheet" type="text/css" href="{% static 'vero_fasion/css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'shopping_cart/css/cart.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <script src="{% static 'vero_fasion/js/main.js' %}"></script>
+    <script src="{% static 'shopping_cart/js/cart.js' %}"></script>
+    <script src="{% static 'customer/js/customer.js' %}"></script>
+
+    {% if title %}
+      <title>Vero Fasion - {{ title }}</title>
+    {% else %}
+      <title>Vero Fasion</title>
+    {% endif %}
+
+  </head>
+  <body>
+
+     <!-- Navigation -->
+     <div id="navbar-top" class="bg-dark text-light">
+
+            <div class="nav-item dropdown d-inline-block ml-3 mt-1">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="opt" aria-haspopup="true" aria-expanded="false">Waluta</a>
+              <div class="dropdown-menu currencies" aria-labelledby="opt">
+                <button class="dropdown-item" id="pln">PLN</button>
+                <button class="dropdown-item" id="euro">EUR</button>
+              </div>
+            </div>
+            <div class="nav-item dropdown d-inline-block">
+               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="language-dropdown">Language</a>
+              <div class="dropdown-menu lang-dropdown" aria-labelledby="language-dropdown">
+                <button class="dropdown-item">Polskie</button>
+                <button class="dropdown-item">русский</button>
+                <button class="dropdown-item">English</button>
+              </div>
+           </div>
+      <span class="full-text" style="float: right; margin-right: 3rem; margin-top: 0.6rem;"><i class="fas fa-phone"></i>  +48 788 020 030</span>
+     </div>
+
+     <nav class="navbar navbar-expand-xl navbar-light bg-white sticky-top">
+
+       <div class="container-fluid ">
+
+         <a class="navbar-brand" href="{% url 'vero-home' %}"><img src="{% static 'vero_fasion/logo.png'%}"></a>
+         <button class="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive"aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+         {% if user.is_authenticated %}
+            <a class="sign-in" href="{% url 'logout' %}"><i class="fas fa-arrow-left"></i> WYLOGUJ</a>
+          {% else %}
+            <a class="sign-in" href="#" data-toggle="modal" data-target="#login-modal"><i class="fas fa-arrow-right"></i> LOGOWANIE</a>
+          {% endif %}
+
+          <div class="far-sign">
+            <a class="btn btn-xs btn-link" style="font-size:25px;" href="{% url 'order-summary'%}">
+              <i class="fas fa-shopping-bag" style="color:#509EF0"></i>
+            </a>
+            <span class="basked-counter">(<span id="basket">0</span>)</span>
+          </div>
+         <div class="collapse navbar-collapse " id="navbarResponsive">
+           <ul class="navbar-nav mr-auto">
+             <li class="nav-item">
+               <a class="nav-link" href="{% url 'vero-home'%}"><i class="fa fa-home"></i> Vero</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="{% url 'vero-woman'%}"> Kobiety</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="{% url 'vero-man'%}"> Mężczyzni</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="{% url 'vero-kid'%}"> Dzieci</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="{% url 'vero-sale'%}">Wyprzedaże</a>
+             </li>
+
+            <li class="nav-item">
+               <a class="sale nav-link bg-dark rounded text-light" href="{% url 'vero-whole-sale' location='IT' %}">Hurtownia</a>
+             </li>
+     
+
+           </ul>
+            <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'vero-search'%}">
+            <div class="input-group has-search">
+              <span class="fa fa-search form-control-feedback"></span>
+              <input id="query" class="form-control" type="search" maxlength="20" name="query" placeholder="Szukaj" aria-label="Search" style="width : 200px;">
+              
+            </div>
+          </form>
+         </div>
+
+     </nav>
+
+     {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+     {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <div class="container-fluid padding">
+      <div class="row text-center padding">
+        <div class="col-12">
+          <hr class="light-100">
+        </div>
+      </div>
+    </div>
+
+    <!-- promotion -->
+    <div class="container-fluid padding">
+      <div class="row padding text-center">
+        <div class="promtxt col-lg-3 col-sm-6">
+          <i class="fas fa-shipping-fast fa-2x" style="color: #509EF0"></i>
+          <h5>Szybka dostawa</h5>
+          <p>2 dni do przetwarzania zamówień</p>
+        </div>
+        <div class="promtxt col-lg-3 col-sm-6">
+          <i class="fas fa-undo fa-2x" style="color: #509EF0"></i>
+          <h5>Zwrot</h5>
+          <p>14 dni polityka refundacji</p>
+        </div>
+        <div class="promtxt col-lg-3 col-sm-6">
+          <i class="fas fa-certificate fa-2x" style="color: #509EF0"></i>
+          <h5>Gwarancja</h5>
+          <p>1 rok gwarancji</p>
+        </div>
+        <div class="promtxt col-lg-3 col-sm-6">
+          <i class="fas fa-gift fa-2x" style="color: #509EF0"></i>
+          <h5>Oferta</h5>
+          <p>Promocja dla klientów</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connect -->
+    <div class="container-fluid padding">
+      <div class="row text-center padding">
+        <div class="col-12">
+          <hr class="light">
+          <h2>Połączyć</h2>
+        </div>
+        <div class="col-12 social padding">
+          <a href="https://www.facebook.com/ali.torkmany.9" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark">
+      <div class="container-fluid padding">
+      <div class="row text-center">
+        <div class="col-md-4 mt-2">
+          <img src="{% static 'vero_fasion/logo.png'%}">
+          <hr class="light">
+          <p>+48 884 888 319</p>
+          <p>zia_faqiri@yahoo.com</p>
+          <p>Marll światkiewicz 50 Lok. D7</p>
+          <p>Mrókow, 05-552, Poland</p>
+        </div>
+        <div class="col-md-4 mt-4">
+          <h5>Subskrypcja</h5>
+          <hr class="light">
+          <p>Zyskaj 10%, gdy zarejestrujesz się na e-maile</p>
+          {% csrf_token %}
+          <form id="subs-form" class="form-inline my-2 my-lg-0 justify-content-center">
+            <input class="form-control mc-auto sm-0" id="subs-mail" type="email" placeholder="Email" aria-label="Email">
+            <button id="load" class="btn btn-outline-primary my-2 my-sm-0 ml-1" type="submit">Subskrybuj</button>
+          </form>
+        </div>
+        <div class="col-md-4 mt-4">
+          <h5>Informacja</h5>
+          <hr class="light">
+          <a href="{% url 'vero-privacy'%}">Polityka prywatności</a>
+          <a href="{% url 'vero-regulation'%}">Zasady zwrotu i zwrotu pieniędzy</a>
+        </div>
+        <div class="col-12">
+          <hr class="light-100">
+          <p>&copy; vero-fashion.com</p>
+        </div>
+      </div>
+      </div>
+    </footer>
+
+
+        <!-- Modal add to cart-->
+    <div class="modal fade" id="cart-modal" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <p class="modal-title" id="modal-title">DODANO DO KOSZYKA</p>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <img id="modal-image" width="100" height="120">
+            </div>
+            <div id="modal-detail">
+              <p id="modal-ptitle"></p>
+              <p id="modal-price">
+                <span id="modal-p_price"></span>
+                <span class="currency"></span>
+              </p>
+              <p id="modal-color">Kolor:  Generic Color</p>
+              <p id="modal-quantity">Ilość:  1</p>
+            </div>
+          </div>
+          <div class="modal-footer text-center">
+            <a href="{% url 'order-summary' %}" class=" btn-detail btn btn-secondary">ZOBACZ KOSZYK</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+            <!-- Modal login-->
+    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="text-right pt-1 pr-3">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-title" id="modal-title">Zaloguj się</p>
+            <a href="#" class="modal-title float-right" data-toggle="modal" data-target="#register-modal" id="modal-title">Nowy klient</a>
+            <hr class="light-modal">
+            <form id="login-form" method="POST" action="{% url 'login' %}">{% csrf_token %}
+              <div class="form-group">
+                <label for="username_login">Adres e-mail</label>
+                <input type="email" class="form-control" name="username" id="username_login" aria-describedby="emailHelp" placeholder="Wprowadź e-mail" required>
+              </div>
+              <div class="form-group">
+                <label for="password_login">Password</label>
+                <input type="password" class="form-control" name="password" id="password_login" placeholder="Password" required>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Pozostań zalogowany</label>
+              </div>
+              <button type="submit" class="btn-modal btn btn-secondary">ZALOGUJ SIĘ</button>
+            </form>
+          <div class="row justify-content-center">
+              <a href="#" class="mt-2" data-toggle="modal" data-target="#reset-modal"><small>Zresetuj hasło? </small></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+            <!-- Modal Register-->
+    <div class="modal fade register_modal" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="text-right pt-1 pr-3">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-title" id="modal-title">Rejestracja klienta</p>
+            <hr class="light-modal">
+            <form id="register-form" method="POST" action="{% url 'send' %}">{% csrf_token %}
+              <div class="form-group">
+                <label for="exampleInputPassword1">Temat</label>
+                <input type="text" class="form-control" name="subject" id="exampleInputPassword1" placeholder="Temat" required>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Adres e-mail</label>
+                <input type="email" class="form-control" name="from_email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Wprowadź e-mail" required>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">Twoja wiadomość</label>
+                <textarea class="form-control" name="message" id="exampleFormControlTextarea1" rows="5" required></textarea>
+              </div>
+              <div class="row justify-content-center">
+                <button type="submit" class="btn-modal btn btn-secondary">WYSŁAĆ</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+               <!-- Modal change password-->
+    <div class="modal fade" id="reset-modal" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="text-right pt-1 pr-3">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-title" id="modal-title">Zresetuj hasło</p>
+            <hr class="light-modal">
+            <form id="password-form" method="POST" action="{% url 'reset-password' %}">{% csrf_token %}
+              <div class="form-group">
+                <label for="username_login">Adres e-mail</label>
+                <input type="email" class="form-control" name="username" id="username_login" aria-describedby="emailHelp" placeholder="Wprowadź e-mail" required>
+              </div>
+              <div class="form-group">
+                <label for="password_login">Stare hasło</label>
+                <input type="password" class="form-control" name="old_password" id="password_login" placeholder="Stare hasło" required>
+              </div>
+              <div class="form-group">
+                <label for="password2_login">Nowe hasło</label>
+                <input type="password" class="form-control" name="new_password" id="password2_login" placeholder="Nowe hasło" required>
+              </div>
+              <button type="submit" class="btn-modal btn btn-secondary">RESETOWANIE</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-alert alert alert-info fade show mb-0">
+        <p id="sub-message" class="mb-0"></p>
+    </div>
+
+    <script type="text/javascript">
+
+      popup('.a-btn');
+    </script>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>

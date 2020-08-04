@@ -1,0 +1,373 @@
+{% extends "vero_fasion/base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div id="container-checkout" class="container-fluid padding">
+  <div class="row">
+    <!--Payment, Address-->
+    <div class="div-1 col-1"></div>
+    <div class=" contain-checkout col-xl-6 col-lg-11">
+      <p class="title-detail">Fakturowanie i dostawa</p>
+      <hr class="light-100">
+      <form id="bill-form">{% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputNameF">Imię</label>
+            <input type="text" class="form-control" id="inputNameF" value="{{ order.billing_address.first_name }}">
+          </div>
+            <div class="form-group col-md-6">
+              <label for="inputLastF">Nazwisko</label>
+              <input type="text" class="form-control" id="inputLastF" value="{{ order.billing_address.last_name }}">
+            </div>
+          </div>
+          <div class="form-group">
+              <label for="inputAddressF">Adres</label>
+              <input type="text" class="form-control" id="inputAddressF" placeholder="Ulica, Apartament, Piętro, Nr" value="{{ order.billing_address.address }}">
+          </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputEmail4F">Email</label>
+            <input type="email" class="form-control" id="inputEmail4F" placeholder="Email" value="{{ order.billing_address.email }}">
+          </div>
+          <div class="form-group col-md-6">
+             <label for="phoneF">Telefon</label>
+             <input class="form-control" type="tel" placeholder="Telefon" id="phoneF" value="{{ order.billing_address.phone }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="inputCountryF">Kraj</label>
+            <select id="inputCountryF" class="form-control">
+              <option selected>
+                {% if order.billing_address %}
+                  {{ order.billing_address.country }}
+                {% else %}
+                  Wybierać...
+                {% endif %}
+              </option>
+
+              <option>...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <label for="inputZipF">Kod pocztowy</label>
+            <input type="text" class="form-control" id="inputZipF" value="{{ order.billing_address.postal_code }}">
+          </div>
+           <div class="form-group col-md-6">
+            <label for="inputCityF">Miasto</label>
+            <input type="text" class="form-control" id="inputCityF" value="{{ order.billing_address.city }}">
+          </div>
+        </div>
+        <div class="text-right">
+          <button id="btn-submit" type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+      </form>
+
+      <!--Billing address after submision-->
+      <div id="billing-div">
+        <p id="delirevy-title" class="mb-0">Dane do faktury</p>
+        <div class="border border-secondary rounded pb-2 pl-4 pr-4 pt-4 mb-5">
+          <a id="bill-edit" style="float: right;">Edytować</a>
+          <p id="bill-fullname" class="mb-0">{{ order.billing_address.fullname }}</p>
+          <p class="text-muted" id="bill-address">{{ order.billing_address.fulladdress }}</p>
+        </div>
+      </div>
+
+      <!--dilervy address after submision-->
+      <div id="delivery-div">
+        <p id="bill-title" class="mb-0 mt-4">Dostawa</p>
+        <div class="border border-secondary rounded pb-2 pl-4 pr-4 pt-4 mb-5">
+          <a id="delivery-edit" data-toggle="modal" data-target="#delivery-modal" style="float: right;">Edytować</a>
+          <p id="delivery-fullname" class="mb-0">
+            {% if order.shipping_address %}
+              {{ order.shipping_address.fullname }}
+            {% else %}
+              {{ order.billing_address.fullname }}
+            {% endif %}
+          </p>
+          <p class="text-muted" id="delivery-address">
+            {% if order.shipping_address %}
+              {{ order.shipping_address.fulladdress }}
+            {% else %}
+              {{ order.billing_address.fulladdress }}
+            {% endif %}
+          </p>
+        </div>
+      </div>
+      <div id="card-div">
+        <p id="delirevy-title" class="mb-0">Zapłata</p>
+        <div class="border border-secondary rounded pb-2 pl-4 pr-4 pt-4">
+                  <!--Card Payment Row-->
+          <form id="card-form" action="{% url 'finish' %}">
+            <div id="card-element">
+            <!-- Elements will create input elements here -->
+            </div>
+            <!-- We'll put the error messages in this element -->
+            <div id="card-errors" role="alert"></div>
+          </form>
+          <i class="fab fa-cc-visa fa-2x mt-2"></i>
+          <i class="fab fa-cc-mastercard fa-2x mt-2"></i>
+          <i class="fab fa-cc-amex fa-2x mt-3"></i>
+        </div>
+
+        <div class="text-center">
+          <small class="text-muted"><u>Łączna kwota do zapłaty</u></small>
+          <h5>
+            <span class="price-pln">
+                  {% if user.is_authenticated %}
+                    {{ order.get_coupon_total_whole.coupon_total }} PLN
+                  {% else %}
+                    {{ order.get_coupon_total.coupon_total }} PLN
+                  {% endif %}
+              </span>
+              <span class="price-euro">
+                  {% if user.is_authenticated %}
+                    {{ order.get_coupon_total_whole.coupon_total_euro }} €
+                  {% else %}
+                    {{ order.get_coupon_total.coupon_total_euro }} €
+                  {% endif %}
+              </span>
+            </span>
+           </h5>
+          <button class=" btn-order btn btn-secondary" id="submit">Złożyć zamówienie</button>
+        </div>
+      </div>
+     
+      
+    </div>
+    <div class="div-2 col-1"></div>
+     <!--Item list-->
+    <div class=" items-checkout col-xl-4 col-lg-11">
+      <a style="float: right;" href="{% url 'order-summary' %}">Edytować</a>
+      <p class="title-detail">WÓZEK SKLEPOWY</p>
+      <hr class="light-100">
+      {% for order_item in order.items.all %}
+        <div class="card mb-8 pr-2">
+          
+          <div class="row no-gutters">
+
+              <img style="max-width: 100px; height: 120px;" src="{{ order_item.item.image.url }}" class="card-img mt-4" alt="...">
+
+            <div>
+              <div class="card-body">
+                
+                <h6 class="card-title mb-0">{{ order_item.get_detail.this_item }}</h6>
+                <h6 class="card-text display-7">
+                 <span class="price-pln">
+                {% if user.is_authenticated %}
+                    {{ order_item.get_detail.this_item.whole_price }} PLN
+                {% else %}
+                  {% if order_item.get_detail.this_item.sale_price %}
+                    {{ order_item.get_detail.this_item.sale_price }} PLN
+                  {% else %}
+                    {{ order_item.get_detail.this_item.price }} PLN
+                  {% endif %}
+              {% endif %}
+                </span>
+                <span class="price-euro">
+                {% if user.is_authenticated %}
+                    {{ order_item.get_detail.euro_whole_price }} €
+                {% else %}
+                  {% if order_item.get_detail.this_item.sale_price %}
+                    {{ order_item.get_detail.euro_discount_price}} €
+                  {% else %}
+                    {{ order_item.get_detail.euro_price }} €
+                  {% endif %}
+              {% endif %}
+                </span>
+              </h6>
+                <p class="card-text mb-0">Kolor <span class="ml-4">{{ order_item.item.produc_color|capfirst }}</span></p>
+
+                <p class="quantity card-text mb-0">Ilość
+                  <span class="ml-3">{{ order_item.quantity }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div>
+          <p class="card-text mb-2 mr-3" style="float: right; font-weight: bolder;">Całkowity: 
+
+                <span class="price-pln">
+                 {% if user.is_authenticated %}
+                  {{ order_item.get_wholeSale_total }} PLN
+                 {% else %}
+                   {% if order_item.item.sale_price %}
+                    {{ order_item.get_detail.total_discount_price }} PLN
+                   {% else %}
+                    {{ order_item.get_detail.total_price }} PLN
+                   {% endif %}
+               {% endif %}
+            </span>
+            <span class="price-euro">
+                {% if user.is_authenticated %}
+                  {{ order_item.get_wholeSale_euro_total }} €
+                 {% else %}
+               {% if order_item.item.sale_price %}
+                    {{ order_item.get_detail.euro_total_discount_price }} €
+                   {% else %}
+                    {{ order_item.get_detail.euro_total_price }} €
+                   {% endif %}
+              {% endif %}
+            </span>
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+
+      <!-- Total of orders --->
+      <hr>
+      <p class="ml-2">Wartość zamówienia <span style="float: right;">
+         <span class="price-pln mr-3">
+                  {% if user.is_authenticated %}
+                    {{ order.get_all_whole_total.all_total }} PLN
+                  {% else %}
+                    {{ order.get_all_total.all_total }} PLN
+                  {% endif %}
+            </span>
+            <span class="price-euro mr-3">
+                  {% if user.is_authenticated %}
+                    {{ order.get_all_whole_total.all_total_euro }} €
+                  {% else %}
+                    {{ order.get_all_total.all_total_euro }} €
+                  {% endif %}
+            </span>
+      </span></p>
+      <p class="ml-2">Dostawa <span class="mr-3" style="float: right;">Darmowy</span></p>
+      <!--promosion code-->
+      
+      <p class="ml-2">
+               <span class="price-pln mr-3">
+                 {% if order.promotion %}
+                  Promotion <span class="mr-3" style="float: right;">{{ order.promotion.amount }} PLN</span>
+                 {% endif %}
+            </span>
+            <span class="price-euro">
+             {% if order.promotion %}
+                  Promotion <span class="mr-3" style="float: right;">{{ order.promotion.get_euro_amount }} €</span> 
+                 {% endif %}
+            </span>
+      </p>
+      <hr class="light-100">
+      <p class="ml-2">CAŁKOWITY <span class="mr-3" style="float: right;"> 
+        <span class="price-pln">
+                  {% if user.is_authenticated %}
+                    {{ order.get_coupon_total_whole.coupon_total }} PLN
+                  {% else %}
+                    {{ order.get_coupon_total.coupon_total }} PLN
+                  {% endif %}
+            </span>
+            <span class="price-euro">
+                  {% if user.is_authenticated %}
+                    {{ order.get_coupon_total_whole.coupon_total_euro }} €
+                  {% else %}
+                    {{ order.get_coupon_total.coupon_total_euro }} €
+                  {% endif %}
+            </span>
+      </span>
+      </p>
+
+      <p class="bottom-info mt-5 ml-2"><small class="text-muted">Nasze zwroty są bezpłatne i łatwe. Jeśli coś jest nie tak, masz 14 dni
+        odesłać go do nas. Przeczytaj więcej w naszym <span><a href="{% url 'vero-regulation'%}"><u>zasady zwrotu i refundacji</u></a></span></small></p>
+    </div>
+    </div>
+  </div>
+</div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="delivery-modal" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <p class="modal-title" id="modal-title">Dodaj adres wysyłki</p>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+           <form id="shipping-form">{% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputName">Imię</label>
+                <input type="text" class="form-control" id="inputName">
+              </div>
+                <div class="form-group col-md-6">
+                  <label for="inputLast">Nazwisko</label>
+                  <input type="text" class="form-control" id="inputLast">
+                </div>
+              </div>
+              <div class="form-group">
+                  <label for="inputAddress">Adres</label>
+                  <input type="text" class="form-control" id="inputAddress" placeholder="Ulica, Apartament, Piętro, Nr">
+              </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmail4">Email</label>
+                <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+              </div>
+              <div class="form-group col-md-6">
+                 <label for="phone">Telefon</label>
+                 <input class="form-control" type="tel" placeholder="Telefon" id="phone">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="inputCountry">Kraj</label>
+                <select id="inputCountry" class="form-control">
+                  <option selected>Wybierać...</option>
+                  <option>...</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="inputZip">pocztowy</label>
+                <input type="text" class="form-control" id="inputZip">
+              </div>
+               <div class="form-group col-md-6">
+                <label for="inputCity">Miasto</label>
+                <input type="text" class="form-control" id="inputCity">
+              </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+              <button id="shipping-submit" type="submit" class=" btn-detail btn btn-secondary">Potwierdzać</button>
+            </div>
+          </form>
+
+          </div>
+         
+        </div>
+      </div>
+    </div>
+
+
+
+
+<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-body">
+        <h2 style="position: fixed; top: 20%; left: 45%; color: white;">Proszę czekać...</h2>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+  $(document).ready(stripefy('{{ PUB_KEY }}', "{{ clientSecret }}"));
+
+
+   //Edit billing address
+   $(document).ready(function(){
+
+    {% if order.billing_address %}
+      $('#bill-form').hide();
+    {% else %}
+      $('#billing-div').hide();
+      $('#delivery-div').hide();
+      $('#card-div').hide();
+    {% endif %}
+
+    $('#bill-edit').click(function(){
+      $('#bill-form').show();
+      $('#billing-div').hide();
+
+    });
+   });
+
+</script>
+{% endblock %}

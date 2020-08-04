@@ -1,0 +1,166 @@
+{% extends "vero_fasion/base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container-fluid padding">
+	<h6>POZYCJE KOSZYKÓW</h6>
+	<div class="row">
+		
+		<div class="col-lg-8 col-md-12">
+			{% for order_item in order.items.all %}
+				<div class="card mb-8 pr-2">
+					<div>
+						<a style="float: right; margin-top: 2px;" href="{% url 'delete-item' order_item.item.id %}"><i class="fas fa-times"></i></a>
+					</div>
+					
+				  <div class="row no-gutters">
+				      <img style="max-width: 100px; height: 120px;" src="{{ order_item.item.image.url }}" class="card-img" alt="...">
+				    <div>
+				      <div class="card-body">
+				      	
+				        <h6 class="card-title mb-0">{{ order_item.get_detail.this_item.title }}</h6>
+				        <h6 class="card-text">
+				         <span class="price-pln">
+				         	{% if user.is_authenticated %}
+				         		{{ order_item.get_detail.this_item.whole_price }} PLN
+				         	{% else %}
+								{% if order_item.get_detail.this_item.sale_price %}
+									{{ order_item.get_detail.this_item.sale_price }} PLN
+								{% else %}
+									{{ order_item.get_detail.this_item.price }} PLN
+								{% endif %}
+							{% endif %}
+						</span>
+						<span class="price-euro">
+							{% if user.is_authenticated %}
+				         		{{ order_item.get_detail.euro_whole_price }} €
+				         	{% else %}
+								{% if order_item.get_detail.this_item.sale_price %}
+									{{ order_item.get_detail.euro_discount_price}} €
+								{% else %}
+									{{ order_item.get_detail.euro_price }} €
+								{% endif %}
+							{% endif %}
+						</span>
+				    	</h6>
+				        <p class="card-text mb-0">Kolor <span class="ml-4">{{ order_item.item.produc_color|capfirst }}</span></p>
+
+				        <p class="quantity card-text">Ilość
+				        	<span class="ml-3"><a class="item-minus" href="{% url 'remove-item' order_item.item.id %}"><i class="fas fa-minus"></i></a></span>
+				        	<span class="ml-2">{{ order_item.quantity }}</span>
+				        	<span><a class="item-plus ml-2" href="{% url 'add-item' order_item.item.id %}"><i class="fas fa-plus"></i></a></span>
+				        </p>
+				      </div>
+				    </div>
+				  </div>
+				  <div>
+					<p class="card-text mb-2 mr-3" style="float: right;">Całkowity: 
+
+				        <span class="price-pln">
+				         {% if user.is_authenticated %}
+				         	{{ order_item.get_wholeSale_total }} PLN
+				         {% else %}
+					         {% if order_item.item.sale_price %}
+					         	{{ order_item.get_detail.total_discount_price }} PLN
+					         {% else %}
+					        	{{ order_item.get_detail.total_price }} PLN
+					         {% endif %}
+					     {% endif %}
+						</span>
+						<span class="price-euro">
+						{% if user.is_authenticated %}
+				         	{{ order_item.get_wholeSale_euro_total }} €
+				         {% else %}
+							 {% if order_item.item.sale_price %}
+					         	{{ order_item.get_detail.euro_total_discount_price }} €
+					         {% else %}
+					        	{{ order_item.get_detail.euro_total_price }} €
+					         {% endif %}
+					    {% endif %}
+						</span>
+				    </p>
+				  </div>
+
+				</div>
+			{% empty %}
+				<div class="text-center">
+					<p>Twój koszyk jest pusty</p>
+					<a href="{% url 'vero-home' %}" class="btn btn-secondary" role="button">KONTYNUOWAĆ ZAKUPY</a>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="summary-detail col-md-12 col-lg-4">
+			<h6 class="ml-2">PODSUMOWANIE ZAMOWIENIA</h6>
+			<hr>
+			<p class="ml-2">Wartość zamówienia <span style="float: right;">
+				 <span class="price-pln mr-3">
+				 			{% if user.is_authenticated %}
+				         		{{ order.get_all_whole_total.all_total }} PLN
+				         	{% else %}
+				         		{{ order.get_all_total.all_total }} PLN
+				         	{% endif %}
+						</span>
+						<span class="price-euro mr-3">
+							{% if user.is_authenticated %}
+				         		{{ order.get_all_whole_total.all_total_euro }} €
+				         	{% else %}
+				         		{{ order.get_all_total.all_total_euro }} €
+				         	{% endif %}
+						</span>
+			</span></p>
+			<p class="ml-2">Delivery <span class="mr-3" style="float: right;">Darmowy</span></p>
+			<!--promosion code-->
+			<p>
+			  <button class="btn btn-text btn-sm" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+			    Masz kod promocyjny? <i class="fas fa-caret-down"></i>
+			  </button>
+			</p>
+			<div class="collapse" id="collapseExample">
+			  <div>
+			    <p>Wpisz swój kod promocyjny</p>
+			    <div>
+			    	<form class="form-inline" action="{% url 'add-coupon' %}" method="POST">
+			    	  {% csrf_token %}
+			    	  {{ form.code }}
+					  <button type="submit" class="btn btn-secondary mb-2">DODAJ</button>
+					</form>
+			    </div>
+			  </div>
+			</div>
+
+			<hr>
+			<p class="ml-2">
+				       <span class="price-pln mr-3">
+				         {% if order.promotion %}
+				         	Promocyjny <span class="mr-3" style="float: right;">{{ order.promotion.amount }} PLN</span>
+				         {% endif %}
+						</span>
+						<span class="price-euro">
+						 {% if order.promotion %}
+				         	Promocyjny <span class="mr-3" style="float: right;">{{ order.promotion.get_euro_amount }} €</span> 
+				         {% endif %}
+						</span>
+			</p>
+			<p class="ml-2">Całkowity <span class="mr-3" style="float: right;"> <span class="price-pln">
+							{% if user.is_authenticated %}
+				         		{{ order.get_coupon_total_whole.coupon_total }} PLN
+				         	{% else %}
+				         		{{ order.get_coupon_total.coupon_total }} PLN
+				         	{% endif %}
+						</span>
+						<span class="price-euro">
+							{% if user.is_authenticated %}
+				         		{{ order.get_coupon_total_whole.coupon_total_euro }} €
+				         	{% else %}
+				         		{{ order.get_coupon_total.coupon_total_euro }} €
+				         	{% endif %}
+						</span>
+			</span></p></span></p>
+			<a href="{% url 'check-out' %}" class="btn btn-secondary btn-block" style="font-weight: lighter; font-size: 14px;">PRZEJDŹ DO KASY</a>
+			<p class="mt-4">Nasze zwroty są bezpłatne i łatwe. Jeśli coś jest nie tak, masz 14 dni
+odesłać go do nas. Przeczytaj więcej w naszym <span><a href="{% url 'vero-regulation'%}"><u>zasady zwrotu i refundacji</u></a></span></p>
+		</div>
+
+	</div>
+</div>
+{% endblock %}

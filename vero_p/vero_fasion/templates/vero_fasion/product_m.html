@@ -1,0 +1,174 @@
+{% extends "vero_fasion/base.html" %}
+{% load staticfiles %}
+{% block content %}
+	<div class="container-fluid padding">
+		<div class="col-12 text-center mt-5">
+			<h4 class="display-6">Torby & Torebki</h4>
+		</div>
+	</div>
+
+	<div class="container-fluid padding">
+		<div class="row text-center">
+			<div class="col-12 inline-items">
+				<ul class="woman_nav list-inline mb-2">
+				  <li class="list-inline-item mr-3"><a href="{% url 'vero-man' %}">Wszystkie torby & torebki</a></li>
+				  <li class="list-inline-item ml-2"><a href="{% url 'vero-man' variety='RAMIĘ' %}">Torby naramienne</a></li>
+				  <li class="list-inline-item ml-2"><a href="{% url 'vero-man' variety='PLECAK' %}">Plecak</a></li>
+				  <li class="list-inline-item ml-2"><a href="{% url 'vero-man' variety='PAS' %}">Torby na pasek</a></li>
+				  <li class="list-inline-item ml-2"><a href="{% url 'vero-man' variety='PORTFEL' %}">Portfele</a></li>
+				</ul>
+			</div>
+			<hr id="hr-top">
+		</div>
+	</div>
+	<!-- dropdown -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+		        <div class="btn-group">
+		          <a id="drop_color" class="btn btn-outline btn-sm dropdown-toggle mb-3" data-toggle="dropdown" href="#">KOLOR<span class="caret" id="color-span"></span></a>
+		          <ul class="colors dropdown-menu">
+		          	{% if variety is None %}
+		          		<li class="dropdown-item"><a id="blue" href="{% url 'vero-man' %}?color=blue"><i class="fas fa-square" style="color:blue"></i> Blue</a></li>
+			            <li class="dropdown-item"><a id="green" href="{% url 'vero-man' %}?color=green"><i class="fas fa-square" style="color:green"></i> Green</a></li>
+			            <li class="dropdown-item"><a id="black" href="{% url 'vero-man' %}?color=black"><i class="fas fa-square" style="color:black"></i> Black</a></li>
+			            <li class="dropdown-item"><a id="brown" href="{% url 'vero-man' %}?color=brown"><i class="fas fa-square" style="color:brown"></i> Brown</a></li>
+			            <li class="dropdown-item"><a id="beige" href="{% url 'vero-man' %}?color=beige"><i class="fas fa-square" style="color:beige"></i> Beige</a></li>
+			            <li class="dropdown-item"><a id="red" href="{% url 'vero-man' %}?color=red"><i class="fas fa-square" style="color:red"></i> Red</a></li>
+			            <li class="dropdown-item"><a id="orange" href="{% url 'vero-man' %}?color=orage"><i class="fas fa-square" style="color:orange"></i> Orange</a></li>
+			            <li class="dropdown-item"><a id="gold" href="{% url 'vero-man' %}?color=gold"><i class="fas fa-square" style="color:gold"></i> Gold</a></li>
+			            <li class="dropdown-item"><a id="yellow" href="{% url 'vero-man' %}?color=yellow"><i class="fas fa-square" style="color:yellow"></i> Yellow</a></li>
+		          	{% else %}
+		          		<li class="dropdown-item"><a id="blue" href="{% url 'vero-man' variety=variety %}?color=blue"><i class="fas fa-square" style="color:blue"></i> Blue</a></li>
+			            <li class="dropdown-item"><a id="green" href="{% url 'vero-man' variety=variety %}?color=green"><i class="fas fa-square" style="color:green"></i> Green</a></li>
+			            <li class="dropdown-item"><a id="black" href="{% url 'vero-man' variety=variety %}?color=black"><i class="fas fa-square" style="color:black"></i> Black</a></li>
+			            <li class="dropdown-item"><a id="brown" href="{% url 'vero-man' variety=variety %}?color=brown"><i class="fas fa-square" style="color:brown"></i> Brown</a></li>
+			            <li class="dropdown-item"><a id="beige" href="{% url 'vero-man' variety=variety %}?color=beige"><i class="fas fa-square" style="color:beige"></i> Beige</a></li>
+			            <li class="dropdown-item"><a id="red" href="{% url 'vero-man' variety=variety %}?color=red"><i class="fas fa-square" style="color:red"></i> Red</a></li>
+			            <li class="dropdown-item"><a id="orange" href="{% url 'vero-man' variety=variety %}?color=orage"><i class="fas fa-square" style="color:orange"></i> Orange</a></li>
+			            <li class="dropdown-item"><a id="gold" href="{% url 'vero-man' variety=variety %}?color=gold"><i class="fas fa-square" style="color:gold"></i> Gold</a></li>
+			            <li class="dropdown-item"><a id="yellow" href="{% url 'vero-man' variety=variety %}?color=yellow "><i class="fas fa-square" style="color:yellow"></i> Yellow</a></li>
+		          	{% endif %}
+		          </ul>
+		        </div>
+		         <div class="btn-group">
+		          <a id="drop_price" class="btn btn-outline btn-sm dropdown-toggle mb-3" data-toggle="dropdown" href="#">CENA<span class="caret"></span></a>
+		          <ul class="price dropdown-menu">
+		          	{% if color is None %}
+			            <li class="dropdown-item"><a id="lowest_price" href="{{request.path}}?order=item__price">Najniższa Cena</a></li>
+			            <li class="dropdown-item"><a id="highest_price" href="{{request.path}}?order=-item__price">Wyzsza Cena</a></li>
+			        {% else %}
+			        	<li class="dropdown-item"><a id="lowest_price" href="{{request.path}}?color={{color}}&order=item__price">Najniższa Cena</a></li>
+			            <li class="dropdown-item"><a id="highest_price" href="{{request.path}}?color={{color}}&order=-item__price">Wyzsza Cena</a></li>
+			        {% endif %}
+		          </ul>
+		        </div>
+		    </div>
+		</div>
+	</div>
+
+	<!-- Data From Sever -->
+	<div class="container-fluid">
+	<div class="row">
+	{% for color_pic in items %}
+	{% for item in color_pic.item_set.all %}
+		<div class="col-lg-3 col-sm-6 text-center">
+			<div class="card">
+				<a href="{% url 'vero-detail' color_pic.id %}">
+					<img class="card-img-top" src="{{ color_pic.image.url }}">
+				</a>
+				
+				<div class="card-body">
+					<h6 class="card-title">{{ item.title }}</h6>
+					{% if color_pic.stock <= 0 %}
+						<button class="btn btn-outline-secondary btn-sm disabled"><span class="align">
+
+						<span class="price-pln">
+							{% if item.sale_price %}
+								<span><del class="deltext">{{ item.price }}</del></span>
+								{{ item.sale_price}} PLN
+							{% else %}
+								{{ item.price }} PLN
+							{% endif %}
+						</span>
+						<span class="price-euro">
+							{% if item.sale_price %}
+							<span><del class="deltext">{{ item.get_euro_price }} €</del></span>
+								{{ item.get_euro_discount_price}} €
+							{% else %}
+								{{ item.get_euro_price }} €
+							{% endif %}
+						</span>
+
+					 </span></button>
+					{% else %}
+					<a id={{color_pic.id}} colour="{{color_pic.produc_color}}" class="a-btn btn btn-outline-secondary btn-sm" href="#" data-toggle="modal" data-target="#cart-modal"><span class="align">
+
+						<span class="price-pln">
+							{% if item.sale_price %}
+								<span><del class="deltext">{{ item.price }} PLN</del></span>
+								{{ item.sale_price}} PLN
+							{% else %}
+								{{ item.price }} PLN
+							{% endif %}
+						</span>
+						<span class="price-euro">
+							{% if item.sale_price %}
+							<span><del class="deltext">{{ item.get_euro_price }} €</del></span>
+								{{ item.get_euro_discount_price}} €
+							{% else %}
+								{{ item.get_euro_price }} €
+							{% endif %}
+						</span>
+
+					 </span></a>
+					 {% endif %}
+					<div class="text-left bag-color">
+						{% for col in item.color.all %}
+							<i class="fas fa-square" style="color:{{ col }}"></i> 
+						{%endfor%}
+					</div>
+				</div>
+			</div>	
+		</div>
+	{% endfor %}
+	{% empty %}
+		<div class="col-12 text-center">
+			<h3>Nie znaleziono produktu</h3>
+		</div>
+
+	{% endfor %}
+
+	</div>
+	<div class="row text-center mb-5 mt-2">
+		<div class="d-flex justify-content-center col-12">
+				<!-- Pagination -->
+		<nav aria-label="...">
+ 		<ul class="pagination">
+			{% if items.paginator.page_range|length > 1 %}
+				{% if items.has_previous %}
+					<li class="page-item"><a class="page-link" href="?page=1">Pierwszy</a></li>
+					<li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number}}">Poprzedni</a></li>
+				{% endif %}
+
+				{% for num in items.paginator.page_range %}
+					{% if items.number == num %}
+						<li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+					{% elif num > items.number|add:'-3' and num < items.number|add:'3' %}
+						<li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+					{% endif %}
+				{% endfor%}
+
+				{% if items.has_next %}
+					<li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">Kolejny</a></li>
+					<li class="page-item"><a class="page-link" href="?page={{ items.paginator.num_pages }}">Ostatni</a></li>
+				{% endif %}
+			{% endif %}
+			</ul>
+		</nav>
+		</div>
+	</div>
+	</div>
+	
+
+{% endblock %}

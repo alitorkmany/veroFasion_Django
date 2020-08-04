@@ -1,0 +1,105 @@
+  .summary-detail{
+    max-width: 600px;
+  }
+
+/*------Checout page------*/
+#container-checkout{
+  display:flex;
+  flex-flow: row wrap;
+  justify-content:space-between;
+}
+.btn-order{
+font-size: 14px;
+width: 22rem;
+}
+#btn-submit{
+font-size: 14px;
+width: 8rem;
+}
+#card-container{
+margin-top: 5px;
+height: 20px;
+}
+
+/*-------- INVOICE PAGE ------*/
+.header2 {
+    margin-top: 7rem;
+}
+
+#bill_to {
+
+    color: #007cae;
+}
+.right_div{
+    float: right;
+    text-align: right;
+    width: 50%;
+}
+.name{
+    font-weight: bold;
+}
+#order_no{
+    font-size: 14px;
+}
+.title {
+    font-size: 22px;
+    font-weight: 100;
+   /* text-align: right;*/
+   padding: 10px 20px 0px 20px;  
+}
+.title span {
+    color: #007cae;
+}
+.details {
+    padding: 10px 20px 0px 20px;
+    text-align: left !important;
+    /*margin-left: 40%;*/
+}
+.hrItem {
+    border: none;
+    height: 1px;
+    /* Set the hr color */
+    color: #333; /* old IE */
+    background-color: #fff; /* Modern Browsers */
+}
+table {
+  margin-top: 5rem;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #ADD8E6;
+}
+
+@media (max-width: 1200px){
+   #container-checkout {
+    flex-direction:column
+  }
+
+  .contain-checkout{
+    order: 3;
+    margin-left: 3rem;
+  }
+  .items-checkout{
+    order: 2;
+    margin-left: 3rem;
+  }
+  .bottom-info{
+    margin-bottom: 3rem;
+  }
+  }
+  @media (max-width: 576px){
+  .contain-checkout{
+    margin-left: 1rem;
+  }
+  .items-checkout{
+    margin-left: 1rem;
+  }
+  }

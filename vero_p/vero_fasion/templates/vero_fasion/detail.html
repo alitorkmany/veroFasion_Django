@@ -1,0 +1,64 @@
+{% extends "vero_fasion/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="container-fluid padding" style="margin-top: 4rem;">
+	<div class="row">
+		<div class="col-md-1 text-center">
+			{% for p_image in products %}
+			<a href="{% url 'vero-detail' p_image.id %}"><img class="img-responsive mb-3" style="width: 100%;" src="{{ p_image.image.url }}"></a>
+			{% endfor%}
+		</div>	
+		<div class="col-md-5 text-center">
+			{% with products.0 as first_product %}
+			<img class="img-responsive mb-3" style="width: 100%;" src="{{ first_product.image.url }}">
+			{% endwith %}
+		</div>
+		<div class="col-md-6 left-padd">
+			<p class="title-detail">{{ item.title}}</p>
+			<p id="price-txt">
+
+				<span class="price-pln">
+					{% if item.sale_price %}
+						<span><del class="deltext">{{ item.price }} PLN</del></span>
+						{{ item.sale_price}} PLN
+					{% else %}
+						{{ item.price }} PLN
+					{% endif %}
+				</span>
+				<span class="price-euro">
+					{% if item.sale_price%}
+						<span><del class="deltext">{{ item.get_euro_price }} €</del></span>
+						{{ item.get_euro_discount_price}} €
+					{% else %}
+						{{ item.get_euro_price }} €
+					{% endif %}
+				</span>
+				<span class="currency"></span></p>
+			<p class="title-detail" id="color-txt">KOLOR</p>
+			<div class="btn-group">
+		       <a id="dropdown-detail" class="btn btn-outline-secondary btn-xl dropdown-toggle mb-3" data-toggle="dropdown" href="#"><span id="sspan" class="caret"></span></a>
+
+		       <ul class="dropdown-menu dropdown-uli">
+		          {% for c in products %}
+		          	<li class="dropdown-item"><a class="d-item" href="{% url 'vero-detail' c.id %}"><i class="fas fa-square fa-2x" style="color:{{ c.produc_color }}"></i> {{ c }}</a></li>
+				  {% endfor %}
+		       </ul>
+		    </div>
+		    {% if products.0.stock <= 0 %}
+		    <p><small class="text-muted">Niedostępne</small></p>
+			<button id={{products.0.id}} colour="products.0.produc_color" class="btn-detail btn btn-secondary" disabled data-toggle="modal" data-target="#cart-modal">OBECNIE BRAK NA STANIE</button>
+			{% else %}
+			<p><small style="color: green;">In Stock</small></p>
+			<button id={{products.0.id}} colour="products.0.produc_color" class="btn-detail btn btn-secondary" data-toggle="modal" data-target="#cart-modal">DODAJ DO KOSZYKA</button>
+			{% endif %}
+			<p class="head-detail">OPIS</p>
+			<p class="dis-detail">{{ item.discription}}</p>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	popup('.btn-detail')
+</script>
+
+{% endblock %}
